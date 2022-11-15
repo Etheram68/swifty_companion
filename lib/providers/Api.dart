@@ -1,17 +1,22 @@
 import 'dart:convert';
-
 import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class Api {
 
+  static final Api _instance = Api._internal();
   final String url = "https://api.intra.42.fr";
   final String authUrl = "/oauth/authorize";
   final String tokenUrl = "/oauth/token";
-  String clientId;
-  String clientSecret;
+  final String clientId = dotenv.env["API_UID"]!;
+  final String clientSecret = dotenv.env["API_SECRET"]!;
   String? token;
 
-  Api(this.clientId, this.clientSecret);
+  Api._internal();
+
+  factory Api() {
+    return _instance;
+  }
 
   void getToken() async {
     Map<String, String> payload = {'grant_type': 'client_credentials', 'response_type': 'code',
@@ -19,9 +24,8 @@ class Api {
 
     var r = await http.post(Uri.parse(url+tokenUrl), body: payload);
     if (r.statusCode == 200) {
-      var decodedResponse = jsonDecode(utf8.decode(r.bodyBytes)) as Map;
-      token = decodedResponse["access_token"];
-      print("Value returned ${decodedResponse}");
+      token = jsonDecode(utf8.decode(r.bodyBytes))["access_token"];
     }
   }
+
 }
