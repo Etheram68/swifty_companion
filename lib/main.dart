@@ -3,8 +3,9 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'providers/Api.dart';
 
 void main() async {
-  await dotenv.load(fileName: "/.env");
-  Api providers = Api(dotenv.env["API_UID"]!, dotenv.env["API_SECRET"]!);
+  await dotenv.load();
+  Api Providers = Api(dotenv.env["API_UID"]!, dotenv.env["API_SECRET"]!);
+  Providers.getToken();
   // runApp(const MyApp());
 }
 
