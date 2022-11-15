@@ -4,7 +4,7 @@ import 'providers/Api.dart';
 
 void main() async {
   await dotenv.load();
-  Api Providers = Api(dotenv.env["API_UID"]!, dotenv.env["API_SECRET"]!);
+  Api Providers = Api();
   Providers.getToken();
   // runApp(const MyApp());
 }
