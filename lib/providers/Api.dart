@@ -19,7 +19,7 @@ class Api {
     return _instance;
   }
 
-  void getToken() async {
+  Future<String?> getToken() async {
     Map<String, String> payload = {'grant_type': 'client_credentials', 'response_type': 'code',
         'client_id': clientId, 'client_secret': clientSecret};
 
@@ -27,9 +27,10 @@ class Api {
     if (r.statusCode == 200) {
       token = jsonDecode(utf8.decode(r.bodyBytes))["access_token"];
     }
+    return token;
   }
-  
-  Future<Map<String, dynamic>> get(String path, Map<String, String>? params) async {
+
+  Future<List<dynamic>> get({required String path, Map<String, String>? params}) async {
     Map<String, String> headers = {'Authorization': 'Bearer $token'};
     var uri = Uri.parse(url+path);
 
@@ -37,8 +38,7 @@ class Api {
       uri = uri.replace(queryParameters:params);
     }
     while (true) {
-      var r = await http.get(uri, headers: headers);
-
+      final r = await http.get(uri, headers: headers);
       // Switch for check different code returned by API
       switch (r.statusCode) {
 

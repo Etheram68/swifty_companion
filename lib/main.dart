@@ -5,7 +5,13 @@ import 'providers/Api.dart';
 void main() async {
   await dotenv.load();
   Api Providers = Api();
-  Providers.getToken();
+  await Providers.getToken();
+
+  Providers.get(path:"/v2/users").then((values) => {
+    for (var value in values) {
+      print(value)
+    }
+  });
   // runApp(const MyApp());
 }
 
