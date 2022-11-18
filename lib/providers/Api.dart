@@ -30,7 +30,7 @@ class Api {
     return token;
   }
 
-  Future<List<dynamic>> get({required String path, Map<String, String>? params}) async {
+  Future<dynamic> get({required String path, Map<String, String>? params}) async {
     Map<String, String> headers = {'Authorization': 'Bearer $token'};
     var uri = Uri.parse(url+path);
 
