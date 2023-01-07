@@ -44,12 +44,14 @@ class Api {
 
         // 401: Unauthorized Try to create new Token
         case 401: {
+          stderr.writeln("Error 401");
           getToken();
         }
         break;
 
         // 429 Limit request send, await and resend request.
         case 429: {
+          stderr.writeln("Error 429 Wait 1 second");
           sleep(const Duration(seconds:1));
         }
         break;
