@@ -13,7 +13,7 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBar extends State<SearchBar> {
   List<String> _suggestions = [];
-  Api provider = Api();
+  final Api _provider = Api();
   Timer? _debounce;
 
   @override
@@ -44,6 +44,7 @@ class _SearchBar extends State<SearchBar> {
                   return ListTile(
                     title: Text(_suggestions[index]),
                     onTap: () {
+                      //Action a faire lorsque je selectionne le nom
                       print(_suggestions[index]);
                     }
                   );
@@ -57,8 +58,8 @@ class _SearchBar extends State<SearchBar> {
   }
 
   void _fetchSuggestions(String query) async {
-    _suggestions = [];
-    final response = await provider.get(path: "/v2/users/",
+    _suggestions.clear();
+    final response = await _provider.get(path: "/v2/users/",
         params: {"range[login]": "${query.toLowerCase()}, ${query.toLowerCase()}zzzzz"}
     );
     _suggestions = [for (var e in response) e['login']];
