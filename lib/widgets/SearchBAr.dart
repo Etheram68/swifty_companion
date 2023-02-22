@@ -10,110 +10,60 @@ class SearchBar extends StatefulWidget {
   State<SearchBar> createState() => _SearchBar();
 }
 
+
 class _SearchBar extends State<SearchBar> {
-  final _delegate = CustomSearchDelegate();
+  List<String> _suggestions = [];
+  Api provider = Api();
+  Timer? _debounce;
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      color: Colors.white,
-      child: Ink(
-        decoration: const ShapeDecoration(
-          color: Colors.lightBlue,
-          shape: CircleBorder(),
-        ),
-        child: IconButton(
-          icon: const Icon(Icons.search),
-          color: Colors.white,
-          onPressed: () {
-            showSearch(context: context, delegate: _delegate);
-          },
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              decoration: const InputDecoration(
+                hintText: "Enter a search Login ...",
+                border: OutlineInputBorder()
+              ),
+              onChanged: (value) {
+                if (_debounce?.isActive ?? false) {
+                  _debounce?.cancel();
+                }
+                _debounce = Timer(const Duration(milliseconds: 500), () {
+                  _fetchSuggestions(value);
+                });
+              },
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _suggestions.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(_suggestions[index]),
+                    onTap: () {
+                      print(_suggestions[index]);
+                    }
+                  );
+                },
+              ),
+            )
+          ],
         ),
       ),
     );
   }
-}
 
-
-class CustomSearchDelegate  extends SearchDelegate {
-
-  List<String> searchNames = [];
-  Timer? timer;
-
-  @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          query = '';
-          searchNames.clear();
-        },
-        icon: const Icon(Icons.clear),
-      )
-    ];
-  }
-
-  @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      onPressed: () {
-        close(context, null);
-      },
-      icon: const Icon(Icons.arrow_back),
+  void _fetchSuggestions(String query) async {
+    _suggestions = [];
+    final response = await provider.get(path: "/v2/users/",
+        params: {"range[login]": "${query.toLowerCase()}, ${query.toLowerCase()}zzzzz"}
     );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    return ListView.builder(
-      itemCount: searchNames.length,
-      itemBuilder: (context, index) {
-        var result = searchNames[index];
-        return ListTile(
-          title: Text(result),
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-
-    return FutureBuilder<List<dynamic>?>(
-      future: getSuggestLogin(),
-      builder: (context, snapshot){
-        if (snapshot.data == null) {
-          return const Center(child: CircularProgressIndicator(),);
-        } else {
-          List<dynamic> suggestLogin = snapshot.data!;
-          searchNames.clear();
-          for (var e in suggestLogin) {
-            searchNames.add(e['login']);
-          }
-
-          return ListView.builder(
-            itemCount: searchNames.length,
-            itemBuilder: (context, index) {
-              var result = searchNames[index];
-              return ListTile(
-                title: Text(result),
-              );
-            },
-          );
-        }
-      }
-    );
-  }
-
-  Future<List<dynamic>?> getSuggestLogin() async {
-    Api provider = Api();
-    var result;
-
-    if (query.length > 2) {
-      result = await provider.get(path: "/v2/users/",
-          params: {"range[login]": "${query.toLowerCase()}, ${query.toLowerCase()}zzzzz"}
-      );
-    }
-    return result;
+    _suggestions = [for (var e in response) e['login']];
+    setState(() {
+      _suggestions.retainWhere((element) => element.toLowerCase().contains(query.toLowerCase()));
+    });
   }
 }
