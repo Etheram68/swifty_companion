@@ -13,58 +13,97 @@ class SearchBar extends StatefulWidget {
 
 class _SearchBar extends State<SearchBar> {
   List<String> _suggestions = [];
-  final Api _provider = Api();
+  late final Api _provider = Api();
   Timer? _debounce;
+  late final TextEditingController _textEditingController;
+  String _lastSearchString = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _textEditingController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _textEditingController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextField(
-              decoration: const InputDecoration(
-                hintText: "Enter a search Login ...",
-                border: OutlineInputBorder()
+      child: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(30),
+                child: Image.asset('img/logo.png'),
               ),
-              onChanged: (value) {
-                if (_debounce?.isActive ?? false) {
-                  _debounce?.cancel();
-                }
-                _debounce = Timer(const Duration(milliseconds: 500), () {
-                  _fetchSuggestions(value);
-                });
-              },
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _suggestions.length,
-                itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_suggestions[index]),
-                    onTap: () {
-                      //Action a faire lorsque je selectionne le nom
-                      print(_suggestions[index]);
-                    }
-                  );
-                },
-              ),
-            )
-          ],
+              _buildSearchField(),
+              Expanded(
+                child: Scrollbar(
+                  thumbVisibility: true,
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => _buildListItem(index),
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemCount: _suggestions.length
+                  )
+                )
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
+  TextField _buildSearchField() {
+    return TextField(
+      controller: _textEditingController,
+      decoration: const InputDecoration(
+          hintText: "Enter a search Login ...",
+          border: OutlineInputBorder()
+      ),
+      onChanged: (value) {
+        _suggestions = [];
+        if (_debounce?.isActive ?? false) {
+          _debounce?.cancel();
+        }
+        _debounce = Timer(const Duration(milliseconds: 500), () {
+          _fetchSuggestions(value.toLowerCase());
+        });
+      },
+      onSubmitted: (value) {
+        print(value);
+      },
+    );
+  }
+
+  Widget _buildListItem(int index) {
+    final suggestion = _suggestions[index];
+    return ListTile(
+      title: Text(_suggestions[index]),
+      onTap: () {
+        _textEditingController.text = suggestion;
+      }
+    );
+  }
+
   void _fetchSuggestions(String query) async {
-    _suggestions.clear();
+    if (query == _lastSearchString) {
+      return;
+    }
     final response = await _provider.get(path: "/v2/users/",
-        params: {"range[login]": "${query.toLowerCase()}, ${query.toLowerCase()}zzzzz"}
+        params: {"range[login]": "$query, ${query}zzzzz"}
     );
     _suggestions = [for (var e in response) e['login']];
     setState(() {
-      _suggestions.retainWhere((element) => element.toLowerCase().contains(query.toLowerCase()));
+      _suggestions.retainWhere((element) => element.toLowerCase().contains(query));
     });
+    _lastSearchString = query;
   }
 }

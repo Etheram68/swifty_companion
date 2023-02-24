@@ -11,7 +11,7 @@ class Companion extends StatelessWidget {
       theme: ThemeData(
         primaryColor: Colors.green,
       ),
-      home: const SearchPage(title: 'Companion - Search'),
+      home: const SearchPage(),
     );
   }
 }
