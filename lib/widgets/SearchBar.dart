@@ -79,15 +79,21 @@ class SearchBar extends State<SearchPage> {
   }
 
   void _selectedLogin(String value) async {
-    final Map<String, dynamic> user = await _provider.get(path: "/v2/users/$value");
+    try {
+      final Map<String, dynamic> user = await _provider.get(
+          path: "/v2/users/$value");
 
-    if (user.isNotEmpty) {
-      final nextPage = ProfilePage(user: user);
-      Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext ctx) {
-        return nextPage;
-      }));
-    } else {
-      Alert.showError(context, "User not found");
+      if (user.isNotEmpty) {
+        final nextPage = ProfilePage(user: user);
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: (BuildContext ctx) {
+              return nextPage;
+            }));
+      } else {
+        Alert.showError(context, "User not found");
+      }
+    } catch (e){
+      Alert.showError(context, "An error occurred");
     }
   }
 
