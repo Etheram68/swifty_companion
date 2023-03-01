@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import '../providers/Api.dart';
+import '../screens/Profile.dart';
+import '../screens/Search.dart';
 
 
-class SearchBar extends StatefulWidget {
-  const SearchBar({Key? key}) : super(key: key);
-
-  @override
-  State<SearchBar> createState() => _SearchBar();
-}
-
-
-class _SearchBar extends State<SearchBar> {
+class SearchBar extends State<SearchPage> {
   List<String> _suggestions = [];
   late final Api _provider = Api();
   Timer? _debounce;
@@ -32,32 +26,34 @@ class _SearchBar extends State<SearchBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(30),
-                child: Image.asset('img/logo.png'),
-              ),
-              _buildSearchField(),
-              Expanded(
-                child: Scrollbar(
-                  thumbVisibility: true,
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) => _buildListItem(index),
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemCount: _suggestions.length
-                  )
+    return Scaffold(
+      body: Center(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(30),
+                  child: Image.asset('img/logo.png'),
+                ),
+                _buildSearchField(),
+                Expanded(
+                    child: Scrollbar(
+                        thumbVisibility: true,
+                        child: ListView.separated(
+                            shrinkWrap: true,
+                            itemBuilder: (context, index) => _buildListItem(index),
+                            separatorBuilder: (context, index) => const Divider(),
+                            itemCount: _suggestions.length
+                        )
+                    )
                 )
-              )
-            ],
+              ],
+            ),
           ),
         ),
-      ),
+      )
     );
   }
 
@@ -78,7 +74,10 @@ class _SearchBar extends State<SearchBar> {
         });
       },
       onSubmitted: (value) {
-        print(value);
+        final nextPage = ProfilePage(login: value);
+        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext ctx){
+          return nextPage;
+        }));
       },
     );
   }

@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import '../widgets/SearchBar.dart';
 
-class SearchPage extends StatelessWidget {
+class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-        body: SearchBar()
-    );
-  }
+  State<SearchPage> createState() => SearchBar();
 }
