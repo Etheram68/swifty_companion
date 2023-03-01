@@ -3,6 +3,7 @@ import 'dart:async';
 import '../providers/Api.dart';
 import '../screens/Profile.dart';
 import '../screens/Search.dart';
+import 'Alert.dart';
 
 
 class SearchBar extends State<SearchPage> {
@@ -73,11 +74,17 @@ class SearchBar extends State<SearchPage> {
           _fetchSuggestions(value.toLowerCase());
         });
       },
-      onSubmitted: (value) {
-        final nextPage = ProfilePage(login: value);
-        Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext ctx){
-          return nextPage;
-        }));
+      onSubmitted: (value) async {
+        final Map<String, dynamic> user = await _provider.get(path: "/v2/users/$value");
+
+        if (user.isNotEmpty) {
+          final nextPage = ProfilePage(user: user);
+          Navigator.of(context).push(MaterialPageRoute(builder: (BuildContext ctx) {
+            return nextPage;
+          }));
+        } else {
+          Alert.showError(context, "User not found");
+        }
       },
     );
   }
