@@ -78,6 +78,9 @@ class SearchBar extends State<SearchPage> {
     );
   }
 
+  // Bug lorsqu'on clique rapidement on lance deux requettes il
+  // faudrait ajouter un shader avec un circle spin pour forcer l'attente
+  // du chargement de la requettes
   void _selectedLogin(String value) async {
     try {
       final Map<String, dynamic> user = await _provider.get(
