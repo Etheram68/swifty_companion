@@ -14,8 +14,8 @@ class ProfileWidget extends State<ProfilePage> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Scrollbar(
-              thumbVisibility: true,
+            child: SingleChildScrollView(
+
               child: Column(
                 children: [
                   _buildAvatar(),
@@ -31,9 +31,12 @@ class ProfileWidget extends State<ProfilePage> {
   }
 
   Widget _curriculumSection() {
+    List projects = widget.user['projects_users'];
+    Iterable ongoingProjects = projects.where((element) => element['status'] != 'finished');
+
     return Container(
       padding: const EdgeInsets.only(top: 10, bottom: 30),
-      margin: const EdgeInsets.only(top: 10),
+      margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 30),
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -52,25 +55,19 @@ class ProfileWidget extends State<ProfilePage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: const [
               Icon(Icons.auto_awesome_sharp, size: 30),
-              Text("Curriculum", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
+              Text("Project In Progress", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
             ],
           ),
           const SizedBox(height: 10),
-          Stack(
-            children: [
-              Center(
-                child: SizedBox(
-                  width: 300,
-                  height: 20,
-                  child: LinearProgressIndicator(
-                    value: (widget.user['cursus_users'][1]['level'] % 1),
-                    backgroundColor: Colors.black26,
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
-                  ),
-                ),
-              ),
-              Align(alignment: Alignment.topCenter,child: Text(widget.user['cursus_users'][1]['level'].floor().toString()),),
-            ],
+          ListView.separated(
+            shrinkWrap: true,
+            itemCount: ongoingProjects.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Center(
+                  child: Text(ongoingProjects.elementAt(index)['project']['name'])
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) => const Divider(),
           )
         ],
       )
@@ -80,6 +77,7 @@ class ProfileWidget extends State<ProfilePage> {
   Widget _personalSection() {
     return Container(
       padding: const EdgeInsets.only(top:10, bottom: 30, right: 30, left: 30),
+      margin: const EdgeInsets.only(right: 10, left: 10),
       decoration: const BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -101,6 +99,23 @@ class ProfileWidget extends State<ProfilePage> {
                 style: const TextStyle(fontWeight: FontWeight.bold)
             ),
           ),
+          Stack(
+            children: [
+              Center(
+                child: SizedBox(
+                  width: 300,
+                  height: 20,
+                  child: LinearProgressIndicator(
+                    value: (widget.user['cursus_users'][1]['level'] % 1),
+                    backgroundColor: Colors.black26,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
+                  ),
+                ),
+              ),
+              Align(alignment: Alignment.topCenter,child: Text(widget.user['cursus_users'][1]['level'].floor().toString()),),
+            ],
+          ),
+          const SizedBox(height: 10),
           Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -146,6 +161,7 @@ class ProfileWidget extends State<ProfilePage> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
+        margin: const EdgeInsets.only(top: 10),
         decoration: const BoxDecoration(
             shape: BoxShape.circle,
             boxShadow: [
