@@ -68,7 +68,7 @@ class Api {
         // Return result send on Json object
         default: {
           counter += 0;
-          // return jsonDecode(utf8.decode(r.bodyBytes));
+          return jsonDecode(utf8.decode(r.bodyBytes));
         }
       }
     }
