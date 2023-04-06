@@ -96,7 +96,7 @@ class SearchBar extends State<SearchPage> {
         Alert.showError(context, "User not found");
       }
     } catch (e){
-      Alert.showError(context, "An error occurred");
+      Alert.showError(context, "An error occurred: $e");
     }
   }
 
@@ -115,13 +115,18 @@ class SearchBar extends State<SearchPage> {
     if (query == _lastSearchString) {
       return;
     }
-    final response = await _provider.get(path: "/v2/users/",
-        params: {"range[login]": "$query, ${query}zzzzz"}
-    );
-    _suggestions = [for (var e in response) e['login']];
-    setState(() {
-      _suggestions.retainWhere((element) => element.toLowerCase().contains(query));
-    });
-    _lastSearchString = query;
+    try {
+      final response = await _provider.get(path: "/v2/users/",
+          params: {"range[login]": "$query, ${query}zzzzz"}
+      );
+      _suggestions = [for (var e in response) e['login']];
+      setState(() {
+        _suggestions.retainWhere((element) =>
+            element.toLowerCase().contains(query));
+      });
+      _lastSearchString = query;
+    } catch (e) {
+      Alert.showError(context, "An error occurred: $e");
+    }
   }
 }
