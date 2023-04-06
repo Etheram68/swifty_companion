@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../screens/Profile.dart';
+import 'dart:core';
 
 class ProfileWidget extends State<ProfilePage> {
 
@@ -55,24 +56,20 @@ class ProfileWidget extends State<ProfilePage> {
             ],
           ),
           const SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
+          Stack(
             children: [
-              Stack(
-                children: [
-                  SizedBox(
-                    width: 300,
-                    height: 20,
-                    child: LinearProgressIndicator(
-                      value: widget.user['cursus_users'][1]['level'],
-                      backgroundColor: Colors.black26,
-                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
-                    ),
+              Center(
+                child: SizedBox(
+                  width: 300,
+                  height: 20,
+                  child: LinearProgressIndicator(
+                    value: (widget.user['cursus_users'][1]['level'] % 1),
+                    backgroundColor: Colors.black26,
+                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
                   ),
-                  const Align(alignment: Alignment.topCenter,child: Text("Text"),),
-                ],
-              )
+                ),
+              ),
+              Align(alignment: Alignment.topCenter,child: Text(widget.user['cursus_users'][1]['level'].floor().toString()),),
             ],
           )
         ],
