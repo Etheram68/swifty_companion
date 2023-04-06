@@ -79,7 +79,7 @@ class ProfileWidget extends State<ProfilePage> {
 
   Widget _personalSection() {
     return Container(
-      padding: const EdgeInsets.all(30),
+      padding: const EdgeInsets.only(top:10, bottom: 30, right: 30, left: 30),
       decoration: const BoxDecoration(
           color: Colors.white,
           boxShadow: [
@@ -93,6 +93,14 @@ class ProfileWidget extends State<ProfilePage> {
       ),
       child: Column(
         children: [
+          Container(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: Text(
+                widget.user['cursus_users'][1]['user']['location'] ?? "",
+                textScaleFactor: 1.2,
+                style: const TextStyle(fontWeight: FontWeight.bold)
+            ),
+          ),
           Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
