@@ -19,12 +19,64 @@ class ProfileWidget extends State<ProfilePage> {
                 children: [
                   _buildAvatar(),
                   _personalSection(),
+                  _curriculumSection(),
                 ],
               ),
             )
           ),
         )
       ),
+    );
+  }
+
+  Widget _curriculumSection() {
+    return Container(
+      padding: const EdgeInsets.only(top: 10, bottom: 30),
+      margin: const EdgeInsets.only(top: 10),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey,
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0,3)
+          )
+        ]
+      ),
+      child: Column(
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: const [
+              Icon(Icons.auto_awesome_sharp, size: 30),
+              Text("Curriculum", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Stack(
+                children: [
+                  SizedBox(
+                    width: 300,
+                    height: 20,
+                    child: LinearProgressIndicator(
+                      value: widget.user['cursus_users'][1]['level'],
+                      backgroundColor: Colors.black26,
+                      valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
+                    ),
+                  ),
+                  const Align(alignment: Alignment.topCenter,child: Text("Text"),),
+                ],
+              )
+            ],
+          )
+        ],
+      )
     );
   }
 
