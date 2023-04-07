@@ -13,13 +13,13 @@ class ProfileWidget extends State<ProfilePage> {
       body: Center(
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.only(right: 16.0, left: 16.0),
             child: SingleChildScrollView(
-
               child: Column(
                 children: [
                   _buildAvatar(),
                   _personalSection(),
+                  _projectsSection(),
                   _curriculumSection(),
                 ],
               ),
@@ -30,13 +30,71 @@ class ProfileWidget extends State<ProfilePage> {
     );
   }
 
+  Widget _buildListItem(int index, Iterable finishedProjects) {
+    final project = finishedProjects.elementAt(index);
+    Color color = project['validated?'] ? Colors.green : Colors.red;
+
+    return ListTile(
+      trailing: Text(
+    project['final_mark'].toString(),
+        style: TextStyle(color: color),
+      ),
+      title: Text(project['project']['name']),
+    );
+  }
+
   Widget _curriculumSection() {
+    List projects = widget.user['projects_users'];
+    Iterable finishedProjects = projects.where((element) => element['status'] == 'finished');
+
+    return Container(
+        constraints: const BoxConstraints(maxHeight: 600),
+        padding: const EdgeInsets.only(top: 10, bottom: 30),
+        margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 30),
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey,
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0,3)
+              )
+            ]
+        ),
+        child: Scrollbar(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.assessment_rounded, size: 30),
+                    Text("Curriculum", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                ListView.separated(
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) => _buildListItem(index, finishedProjects),
+                    separatorBuilder: (context, index) => const Divider(),
+                    itemCount: finishedProjects.length
+                ),
+              ],
+            ),
+          ),
+        )
+    );
+  }
+
+  Widget _projectsSection() {
     List projects = widget.user['projects_users'];
     Iterable ongoingProjects = projects.where((element) => element['status'] != 'finished');
 
     return Container(
-      padding: const EdgeInsets.only(top: 10, bottom: 30),
-      margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 30),
+      padding: const EdgeInsets.only(top: 10, bottom: 10),
+      margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 10),
       decoration: const BoxDecoration(
         color: Colors.white,
         boxShadow: [
