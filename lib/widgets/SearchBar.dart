@@ -36,7 +36,7 @@ class SearchBar extends State<SearchPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(30),
-                  child: Image.asset('img/logo.png'),
+                  child: Image.asset('img/42-compagnon-logo.png'),
                 ),
                 _buildSearchField(),
                 Expanded(

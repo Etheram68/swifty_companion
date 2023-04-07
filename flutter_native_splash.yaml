@@ -1,0 +1,8 @@
+flutter_native_splash:
+  color: "#ffffff"
+  image: img/42-companion-logo.png
+  color-dark: "#121212"
+
+  android_12:
+    image: img/42-companion-logo.png
+    icon_background_color: "#ffffff"
