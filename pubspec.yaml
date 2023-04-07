@@ -52,6 +52,17 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
 
+flutter_native_splash:
+  android: true
+  ios: true
+  web: false
+  color: "#ffffff"
+  image: img/42-companion-logo.png
+  background_image: img/background-splash.png
+  color_dark: "#121212"
+  image_dark: img/42-companion-logo.png
+  background_image_dark: img/background-splash.png
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -65,8 +76,8 @@ flutter:
 
   assets:
     - .env
-    - img/logo.png
-    - img/42-compagnon-logo.png
+    - img/42-companion-logo.png
+    - img/background-splash.png
 
   # To add assets to your application, add an assets section, like this:
   # assets:
