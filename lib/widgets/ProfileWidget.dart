@@ -12,19 +12,16 @@ class ProfileWidget extends State<ProfilePage> {
       ),
       body: Center(
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(right: 16.0, left: 16.0),
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  _buildAvatar(),
-                  _personalSection(),
-                  _projectsSection(),
-                  _curriculumSection(),
-                ],
-              ),
-            )
-          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                _buildAvatar(),
+                _personalSection(),
+                _projectsSection(),
+                _curriculumSection(),
+              ],
+            ),
+          )
         )
       ),
     );
@@ -48,7 +45,7 @@ class ProfileWidget extends State<ProfilePage> {
     Iterable finishedProjects = projects.where((element) => element['status'] == 'finished');
 
     return Container(
-        constraints: const BoxConstraints(maxHeight: 600),
+        constraints: const BoxConstraints(maxHeight: 500),
         padding: const EdgeInsets.only(top: 10, bottom: 30),
         margin: const EdgeInsets.only(top: 10, right: 10, left: 10, bottom: 30),
         decoration: const BoxDecoration(
@@ -76,10 +73,11 @@ class ProfileWidget extends State<ProfilePage> {
                 ),
                 const SizedBox(height: 10),
                 ListView.separated(
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) => _buildListItem(index, finishedProjects),
-                    separatorBuilder: (context, index) => const Divider(),
-                    itemCount: finishedProjects.length
+                  physics: const NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) => _buildListItem(index, finishedProjects),
+                  separatorBuilder: (context, index) => const Divider(),
+                  itemCount: finishedProjects.length
                 ),
               ],
             ),
@@ -118,6 +116,7 @@ class ProfileWidget extends State<ProfilePage> {
           ),
           const SizedBox(height: 10),
           ListView.separated(
+            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             itemCount: ongoingProjects.length,
             itemBuilder: (BuildContext context, int index) {
