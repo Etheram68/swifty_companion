@@ -36,7 +36,11 @@ class SearchLoginBar extends State<SearchPage> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(30),
-                  child: Image.asset('img/42-companion-logo.png'),
+                  child: Image.asset(
+                    'img/42-companion-logo.png',
+                    width: 150,
+                    height: 150,
+                  ),
                 ),
                 _buildSearchField(),
                 Expanded(
@@ -85,6 +89,9 @@ class SearchLoginBar extends State<SearchPage> {
     try {
       final Map<String, dynamic> user = await _provider.get(
           path: "/v2/users/$value");
+
+      user['coalitions'] = await _provider.get(
+          path: "/v2/users/$value/coalitions");
 
       if (user.isNotEmpty) {
         final nextPage = ProfilePage(user: user);

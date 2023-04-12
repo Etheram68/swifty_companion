@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/Profile.dart';
 import 'dart:core';
 
@@ -63,10 +64,10 @@ class ProfileWidget extends State<ProfilePage> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                Row(
+                const Row(
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.assessment_rounded, size: 30),
                     Text("Curriculum", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
                   ],
@@ -106,10 +107,10 @@ class ProfileWidget extends State<ProfilePage> {
       ),
       child: Column(
         children: [
-          Row(
+          const Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
               Icon(Icons.auto_awesome_sharp, size: 30),
               Text("Project In Progress", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
             ],
@@ -132,6 +133,8 @@ class ProfileWidget extends State<ProfilePage> {
   }
 
   Widget _personalSection() {
+    String colorHex = widget.user['coalitions'][0]['color'];
+    Color colorCoa = Color(int.parse(colorHex.replaceAll("#", "ff"), radix: 16));
     return Container(
       padding: const EdgeInsets.only(top:10, bottom: 30, right: 30, left: 30),
       margin: const EdgeInsets.only(right: 10, left: 10),
@@ -165,7 +168,7 @@ class ProfileWidget extends State<ProfilePage> {
                   child: LinearProgressIndicator(
                     value: (widget.user['cursus_users'][1]['level'] % 1),
                     backgroundColor: Colors.black26,
-                    valueColor: const AlwaysStoppedAnimation<Color>(Colors.amber),
+                    valueColor: AlwaysStoppedAnimation<Color>(colorCoa),
                   ),
                 ),
               ),
@@ -182,11 +185,25 @@ class ProfileWidget extends State<ProfilePage> {
             ],
           ),
           const SizedBox(height: 10),
-          const Divider(),
           Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
-            children: const [
+            children: [
+              SvgPicture.network(
+                widget.user['coalitions'][0]['image_url'],
+                width: 30,
+                height: 30,
+                colorFilter: ColorFilter.mode(colorCoa, BlendMode.srcIn),
+              ),
+              Text("Coalitions: ${widget.user['coalitions'][0]['name']}"),
+            ],
+          ),
+          const SizedBox(height: 10),
+          const Divider(),
+          const Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
               Icon(Icons.account_box_rounded, size: 30),
               Text("Personal Info", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
             ],
