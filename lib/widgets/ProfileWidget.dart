@@ -4,9 +4,12 @@ import '../screens/Profile.dart';
 import 'dart:core';
 
 class ProfileWidget extends State<ProfilePage> {
+  int curNum = 0;
 
   @override
   Widget build(BuildContext context) {
+    curNum = (widget.user['cursus_users'].length == 2) ? 1 : 0;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.user['login']),
@@ -43,7 +46,8 @@ class ProfileWidget extends State<ProfilePage> {
 
   Widget _curriculumSection() {
     List projects = widget.user['projects_users'];
-    Iterable finishedProjects = projects.where((element) => element['status'] == 'finished');
+    Iterable finishedProjects = projects.where((element) =>
+        element['status'] == 'finished' && element['final_mark'] != null);
 
     return Container(
         constraints: const BoxConstraints(maxHeight: 500),
@@ -132,9 +136,29 @@ class ProfileWidget extends State<ProfilePage> {
     );
   }
 
+  Widget _coalition(colorCoa) {
+    if (widget.user['coalitions'].length == 0) {
+      return const Row();
+    }
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        SvgPicture.network(
+          widget.user['coalitions'][0]['image_url'],
+          width: 30,
+          height: 30,
+          colorFilter: ColorFilter.mode(colorCoa, BlendMode.srcIn),
+        ),
+        Text("Coalitions: ${widget.user['coalitions'][0]['name']}"),
+      ],
+    );
+  }
+
   Widget _personalSection() {
-    String colorHex = widget.user['coalitions'][0]['color'];
+    String colorHex = (widget.user['coalitions'].length > 0) ? widget.user['coalitions'][0]['color'] : "ffc107";
     Color colorCoa = Color(int.parse(colorHex.replaceAll("#", "ff"), radix: 16));
+
     return Container(
       padding: const EdgeInsets.only(top:10, bottom: 30, right: 30, left: 30),
       margin: const EdgeInsets.only(right: 10, left: 10),
@@ -154,7 +178,7 @@ class ProfileWidget extends State<ProfilePage> {
           Container(
             padding: const EdgeInsets.only(bottom: 10),
             child: Text(
-                widget.user['cursus_users'][1]['user']['location'] ?? "",
+                widget.user['cursus_users'][curNum]['user']['location'] ?? "",
                 textScaleFactor: 1.2,
                 style: const TextStyle(fontWeight: FontWeight.bold)
             ),
@@ -166,13 +190,13 @@ class ProfileWidget extends State<ProfilePage> {
                   width: 300,
                   height: 20,
                   child: LinearProgressIndicator(
-                    value: (widget.user['cursus_users'][1]['level'] % 1),
+                    value: (widget.user['cursus_users'][curNum]['level'] % 1),
                     backgroundColor: Colors.black26,
                     valueColor: AlwaysStoppedAnimation<Color>(colorCoa),
                   ),
                 ),
               ),
-              Align(alignment: Alignment.topCenter,child: Text(widget.user['cursus_users'][1]['level'].floor().toString()),),
+              Align(alignment: Alignment.topCenter,child: Text(widget.user['cursus_users'][curNum]['level'].floor().toString()),),
             ],
           ),
           const SizedBox(height: 10),
@@ -185,19 +209,7 @@ class ProfileWidget extends State<ProfilePage> {
             ],
           ),
           const SizedBox(height: 10),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              SvgPicture.network(
-                widget.user['coalitions'][0]['image_url'],
-                width: 30,
-                height: 30,
-                colorFilter: ColorFilter.mode(colorCoa, BlendMode.srcIn),
-              ),
-              Text("Coalitions: ${widget.user['coalitions'][0]['name']}"),
-            ],
-          ),
+          _coalition(colorCoa),
           const SizedBox(height: 10),
           const Divider(),
           const Row(
@@ -232,6 +244,11 @@ class ProfileWidget extends State<ProfilePage> {
   }
 
   Widget _buildAvatar() {
+    dynamic image = const AssetImage('img/avatar-default.png');
+    if (widget.user['image']['versions']['large'] != null) {
+      image = NetworkImage(widget.user['image']['versions']['large']);
+    }
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: Container(
@@ -249,7 +266,7 @@ class ProfileWidget extends State<ProfilePage> {
         ),
         child: CircleAvatar(
           radius: 100,
-          foregroundImage: NetworkImage(widget.user['image']['versions']['large']),
+          foregroundImage: image,
         ),
       )
     );

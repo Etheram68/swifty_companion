@@ -90,10 +90,9 @@ class SearchLoginBar extends State<SearchPage> {
       final Map<String, dynamic> user = await _provider.get(
           path: "/v2/users/$value");
 
-      user['coalitions'] = await _provider.get(
-          path: "/v2/users/$value/coalitions");
-
       if (user.isNotEmpty) {
+        user['coalitions'] = await _provider.get(
+            path: "/v2/users/$value/coalitions");
         final nextPage = ProfilePage(user: user);
         Navigator.of(context).push(
             MaterialPageRoute(builder: (BuildContext ctx) {
