@@ -178,7 +178,7 @@ class ProfileWidget extends State<ProfilePage> {
           Container(
             padding: const EdgeInsets.only(bottom: 10),
             child: Text(
-                widget.user['cursus_users'][curNum]['user']['location'] ?? "",
+                widget.user['location'] ?? "",
                 textScaleFactor: 1.2,
                 style: const TextStyle(fontWeight: FontWeight.bold)
             ),
