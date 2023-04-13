@@ -68,7 +68,7 @@ flutter_native_splash:
   image: img/42-companion-logo.png
   background_image: img/background-splash.png
   color_dark: "#121212"
-  image_dark: img/42-companion-logo.png
+  image_dark: img/42-companion-logo-dark.png
   background_image_dark: img/background-splash.png
 
 # For information on the generic Dart part of this file, see the
