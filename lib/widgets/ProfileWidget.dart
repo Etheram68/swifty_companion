@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_radar_chart/flutter_radar_chart.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../screens/Profile.dart';
 import 'dart:core';
@@ -8,7 +9,8 @@ class ProfileWidget extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    curNum = (widget.user['cursus_users'].length == 2) ? 1 : 0;
+    curNum = (widget.user["cursus_users"].length != 0) ?
+        widget.user["cursus_users"].length - 1 : 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -21,6 +23,7 @@ class ProfileWidget extends State<ProfilePage> {
               children: [
                 _buildAvatar(),
                 _personalSection(),
+                _skills(),
                 _projectsSection(),
                 _curriculumSection(),
               ],
@@ -30,7 +33,91 @@ class ProfileWidget extends State<ProfilePage> {
       ),
     );
   }
+  
+  Widget _skills() {
+    if (widget.user['cursus_users'].length == 0 ||
+          widget.user['cursus_users'][curNum]['skills'].length == 0) {
+      return Container(
+        padding: const EdgeInsets.only(left: 10, right: 10),
+        margin: const EdgeInsets.only(top: 10, right: 10, left: 10),
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                  color: Colors.grey,
+                  spreadRadius: 2,
+                  blurRadius: 5,
+                  offset: Offset(0,3)
+              )
+            ]
+        ),
+        child: const Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.bar_chart_rounded, size: 30),
+                  Text("School Skills", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
+                ],
+              ),
+            ]
+        ),
+      );
+    }
+    const ticks = [0, 5, 10, 15, 20];
+    List<String> features = [];
+    widget.user['cursus_users'][curNum]['skills'].forEach((obj) => features.add(obj['name']));
+    List<num> value = [];
+    widget.user['cursus_users'][curNum]['skills'].forEach((obj) => value.add(obj['level']));
+    var data = [value];
 
+    return Container(
+      constraints: const BoxConstraints(maxHeight: 400),
+      padding: const EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
+      margin: const EdgeInsets.only(top: 10, right: 10, left: 10),
+      decoration: const BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+                color: Colors.grey,
+                spreadRadius: 2,
+                blurRadius: 5,
+                offset: Offset(0,3)
+            )
+          ]
+      ),
+      child: Column(
+        children: [
+          const Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.bar_chart_rounded, size: 30),
+              Text("School Skills", textScaleFactor: 1.2, style: TextStyle(fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Expanded(child:
+            RadarChart(ticks: ticks, features: features, data: data,
+              featuresTextStyle: const TextStyle(
+                  fontSize: 10,
+                  color: Colors.black
+              ),
+              graphColors: const [
+                Colors.amber,
+                Colors.green,
+                Colors.blue,
+                Colors.red,
+                Colors.orange
+              ],
+            ),
+          )
+        ],
+      )
+    );
+  }
+  
   Widget _buildListItem(int index, Iterable finishedProjects) {
     final project = finishedProjects.elementAt(index);
     Color color = project['validated?'] ? Colors.green : Colors.red;
@@ -156,8 +243,11 @@ class ProfileWidget extends State<ProfilePage> {
   }
 
   Widget _personalSection() {
-    String colorHex = (widget.user['coalitions'].length > 0) ? widget.user['coalitions'][0]['color'] : "ffc107";
+    String colorHex = (widget.user['coalitions'].length > 0) ?
+        widget.user['coalitions'][0]['color'] : "ffc107";
     Color colorCoa = Color(int.parse(colorHex.replaceAll("#", "ff"), radix: 16));
+    double level = (widget.user['cursus_users'].length != 0) ?
+        widget.user['cursus_users'][curNum]['level'] : 0.0;
 
     return Container(
       padding: const EdgeInsets.only(top:10, bottom: 30, right: 30, left: 30),
@@ -190,13 +280,13 @@ class ProfileWidget extends State<ProfilePage> {
                   width: 300,
                   height: 20,
                   child: LinearProgressIndicator(
-                    value: (widget.user['cursus_users'][curNum]['level'] % 1),
+                    value: (level % 1),
                     backgroundColor: Colors.black26,
                     valueColor: AlwaysStoppedAnimation<Color>(colorCoa),
                   ),
                 ),
               ),
-              Align(alignment: Alignment.topCenter,child: Text(widget.user['cursus_users'][curNum]['level'].floor().toString()),),
+              Align(alignment: Alignment.topCenter,child: Text(level.floor().toString()),),
             ],
           ),
           const SizedBox(height: 10),
