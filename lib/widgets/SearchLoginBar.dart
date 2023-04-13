@@ -35,11 +35,11 @@ class SearchLoginBar extends State<SearchPage> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(30),
+                  padding: const EdgeInsets.only(bottom: 20),
                   child: Image.asset(
                     'img/42-companion-logo.png',
-                    width: 150,
-                    height: 150,
+                    width: 125,
+                    height: 125,
                   ),
                 ),
                 _buildSearchField(),
@@ -86,23 +86,28 @@ class SearchLoginBar extends State<SearchPage> {
   // faudrait ajouter un shader avec un circle spin pour forcer l'attente
   // du chargement de la requettes
   void _selectedLogin(String value) async {
-    try {
-      final Map<String, dynamic> user = await _provider.get(
-          path: "/v2/users/$value");
+    if (value.isNotEmpty) {
+      try {
+        final Map<String, dynamic> user = await _provider.get(
+            path: "/v2/users/$value");
 
-      if (user.isNotEmpty) {
-        user['coalitions'] = await _provider.get(
-            path: "/v2/users/$value/coalitions");
-        final nextPage = ProfilePage(user: user);
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (BuildContext ctx) {
-              return nextPage;
-            }));
-      } else {
-        Alert.showError(context, "User not found");
+        if (user.isNotEmpty) {
+          user['coalitions'] = await _provider.get(
+              path: "/v2/users/$value/coalitions");
+          final nextPage = ProfilePage(user: user);
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (BuildContext ctx) {
+                return nextPage;
+              }));
+        } else {
+          Alert.showError(context, "User not found");
+        }
+      } catch (e) {
+        print(e);
+        Alert.showError(context, "An error occurred: $e");
       }
-    } catch (e){
-      Alert.showError(context, "An error occurred: $e");
+    } else {
+      Alert.showError(context, "Field cannot be empty");
     }
   }
 
